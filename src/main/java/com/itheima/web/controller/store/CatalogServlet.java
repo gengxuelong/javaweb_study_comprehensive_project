@@ -1,21 +1,22 @@
 package com.itheima.web.controller.store;
 
 import com.github.pagehelper.PageInfo;
-import com.itheima.domain.store.Company;
+import com.itheima.domain.store.Catalog;
+import com.itheima.domain.store.Course;
 import com.itheima.utils.BeanUtil;
 import com.itheima.web.controller.BaseServlet;
 import org.apache.commons.lang3.StringUtils;
-
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
-// uri:/store/company?operation=list
-@WebServlet("/store/company")
-public class CompanyServlet extends BaseServlet {
+// uri:/store/catalog?operation=list
+@WebServlet("/store/catalog")
+public class CatalogServlet extends BaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -38,7 +39,6 @@ public class CompanyServlet extends BaseServlet {
     private void list(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
         //进入列表页
         //获取数据
-//        CompanyService companyService = new CompanyServiceImpl();
         int page = 1;
         int size = 5;
         if(StringUtils.isNotBlank(request.getParameter("page"))){
@@ -47,60 +47,59 @@ public class CompanyServlet extends BaseServlet {
         if(StringUtils.isNotBlank(request.getParameter("size"))){
             size = Integer.parseInt(request.getParameter("size"));
         }
-        PageInfo all = companyService.findAll(page, size);
+        PageInfo all = catalogService.findAll(page, size);
         //将数据保存到指定的位置
         request.setAttribute("page",all);
         //跳转页面
-        request.getRequestDispatcher("/WEB-INF/pages/store/company/list.jsp").forward(request,response);
+        request.getRequestDispatcher("/WEB-INF/pages/store/catalog/list.jsp").forward(request,response);
     }
 
     private void toAdd(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+        //加载学科信息
+        List<Course> all = courseService.findAll();
+        request.setAttribute("courseList",all);
         //跳转页面
-        request.getRequestDispatcher("/WEB-INF/pages/store/company/add.jsp").forward(request,response);
+        request.getRequestDispatcher("/WEB-INF/pages/store/catalog/add.jsp").forward(request,response);
     }
-
     private void save(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
         //将数据获取到，封装成一个对象
-        Company company = BeanUtil.fillBean(request,Company.class,"yyyy-MM-dd");
+        Catalog catalog = BeanUtil.fillBean(request,Catalog.class,"yyyy-MM-dd");
         //调用业务层接口save
-//        CompanyService companyService = new CompanyServiceImpl();
-        companyService.save(company);
+        catalogService.save(catalog);
         //跳转回到页面list
-        //list(request,response);
-        response.sendRedirect(request.getContextPath()+"/store/company?operation=list");
+        response.sendRedirect(request.getContextPath()+"/store/catalog?operation=list");
     }
-
     private void toEdit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //查询要修改的数据findById
         String id = request.getParameter("id");
-//        CompanyService companyService = new CompanyServiceImpl();
-        Company company = companyService.findById(id);
+        Catalog catalog = catalogService.findById(id);
         //将数据加载到指定区域，供页面获取
-        request.setAttribute("company",company);
+        request.setAttribute("catalog",catalog);
+
+        //加载学科信息
+        List<Course> all = courseService.findAll();
+        request.setAttribute("courseList",all);
+
         //跳转页面
-        request.getRequestDispatcher("/WEB-INF/pages/store/company/update.jsp").forward(request,response);
+        request.getRequestDispatcher("/WEB-INF/pages/store/catalog/update.jsp").forward(request,response);
     }
 
     private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //将数据获取到，封装成一个对象
-        Company company = BeanUtil.fillBean(request,Company.class,"yyyy-MM-dd");
+        Catalog catalog = BeanUtil.fillBean(request,Catalog.class,"yyyy-MM-dd");
         //调用业务层接口save
-//        CompanyService companyService = new CompanyServiceImpl();
-        companyService.update(company);
+        catalogService.update(catalog);
         //跳转回到页面list
-        //list(request,response);
-        response.sendRedirect(request.getContextPath()+"/store/company?operation=list");
+        response.sendRedirect(request.getContextPath()+"/store/catalog?operation=list");
     }
 
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //将数据获取到，封装成一个对象
-        Company company = BeanUtil.fillBean(request,Company.class);
+        Catalog catalog = BeanUtil.fillBean(request,Catalog.class);
         //调用业务层接口save
-//        CompanyService companyService = new CompanyServiceImpl();
-        companyService.delete(company);
+        catalogService.delete(catalog);
         //跳转回到页面list
-        //list(request,response);
-        response.sendRedirect(request.getContextPath()+"/store/company?operation=list");
+        response.sendRedirect(request.getContextPath()+"/store/catalog?operation=list");
     }
 
     @Override

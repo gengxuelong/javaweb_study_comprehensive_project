@@ -14,7 +14,7 @@
         <result column="join_date" jdbcType="VARCHAR" property="joinDate"/>
         <result column="dept_id" jdbcType="VARCHAR" property="deptId"/>
         <association
-            property=""
+            property="dept"
             column="dept_id"
             javaType="com.itheima.domain.system.Dept"
             select="com.itheima.dao.system.DeptDao.findById"
